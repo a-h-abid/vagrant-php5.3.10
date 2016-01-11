@@ -1,0 +1,80 @@
+sudo -i
+wget http://in1.php.net/distributions/php-5.3.29.tar.bz2
+tar -xvf php-5.3.29.tar.bz2
+cd php-5.3.29
+./configure
+make
+make install
+
+or
+
+sudo apt-get update
+sudo apt-get install -y curl python-software-properties
+sudo add-apt-repository ppa:sergey-dryabzhinsky/php53
+sudo apt-get update
+sudo apt-get install php5
+
+
+---------------------------------------------------------
+
+sudo -s
+Download source
+
+mkdir /usr/local/src/php5-build
+cd /usr/local/src/php5-build
+wget -O php-5.3.29.tar.gz http://de1.php.net/get/php-5.3.29.tar.gz/from/this/mirror
+tar -xzf php-5.3.29.tar.gz
+cd php-5.3.29
+Install all necessary dependencies
+
+apt-get install apache2 php5 php5-common php5-cli php5-mysql php5-gd php5-mcrypt php5-curl libapache2-mod-php5 php5-xmlrpc mysql-server mysql-client libapache2-mod-fastcgi
+
+apt-get install build-essential php5-dev libbz2-dev libmysqlclient-dev libxpm-dev libmcrypt-dev libcurl4-gnutls-dev libxml2-dev libjpeg-dev libpng12-dev
+Compile PHP
+
+./configure --prefix=/usr/share/php53 --datadir=/usr/share/php53 --mandir=/usr/share/man --bindir=/usr/bin/php53 --includedir=/usr/include/php53 --sysconfdir=/etc/php53/apache2 --with-config-file-path=/etc/php53/apache2 --with-config-file-scan-dir=/etc/php53/conf.d --enable-bcmath --with-curl=shared,/usr --with-mcrypt=shared,/usr --enable-cli --with-gd --with-mysql --with-mysqli --enable-libxml --enable-session --enable-xml --enable-simplexml --enable-filter --enable-inline-optimization --with-jpeg-dir --with-png-dir --with-zlib --with-bz2 --with-curl --enable-exif --enable-soap --with-pic --disable-rpath --disable-static --enable-shared --with-gnu-ld --enable-mbstring
+make && make install
+Activate apache module
+
+a2enmod cgi fastcgi actions
+service apache2 restart
+Create corresponding configuration file
+
+vi /etc/apache2/php53.conf
+insert:
+
+#Include file for virtual hosts that need to run PHP 5.3
+
+
+SetHandler application/x-httpd-php5
+
+ScriptAlias /php53-cgi /usr/lib/cgi-bin/php53-cgi
+Action application/x-httpd-php5 /php53-cgi
+AddHandler application/x-httpd-php5 .php
+Create environment script to start the additional PHP version
+
+vi /usr/lib/cgi-bin/php53-cgi
+insert:
+
+#!/bin/sh
+PHPRC="/etc/php53/apache2/"
+export PHPRC
+PHP_FCGI_CHILDREN=4
+export PHP_FCGI_CHILDREN
+PHP_FCGI_MAX_REQUESTS=5000
+export PHP_FCGI_MAX_REQUESTS
+exec /usr/bin/php53/php-cgi
+Configure Apache2's virtual hosts
+
+Include php53.conf
+ServerName example.org
+DocumentRoot /var/www/sites/example.org
+
+Options Indexes FollowSymLinks MultiViews
+AllowOverride all
+Require all granted
+last restart...
+
+service apache2 restart
+
+---------------------------------------------------------
