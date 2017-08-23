@@ -55,6 +55,6 @@ cd /usr/local
 sudo wget http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz
 sudo tar xzf ioncube_loaders_lin_x86-64.tar.gz
 sudo mkdir -p /opt/sp/php5.3/lib/php/extensions/ioncube/
-sudo cp ioncube/ioncube_loader_lin_5.3.so /opt/sp/php5.6/lib/php/extensions/ioncube/
+sudo cp ioncube/ioncube_loader_lin_5.3.so /opt/sp/php5.3/lib/php/extensions/ioncube/
 sudo bash -c 'echo "zend_extension=/opt/sp/php5.3/lib/php/extensions/ioncube/ioncube_loader_lin_5.3.so" > /etc/php5/conf.d/0-ioncube.ini'
 sudo service apache2 restart
